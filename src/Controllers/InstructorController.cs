@@ -20,7 +20,7 @@ namespace Workforce.Controllers
     {
         private readonly IConfiguration _config;
 
-        public StudentController(IConfiguration config)
+        public InstructorController(IConfiguration config)
         {
             _config = config;
         }
@@ -38,32 +38,32 @@ namespace Workforce.Controllers
 
             string sql = @"
             select
-                s.Id,
-                s.FirstName,
-                s.LastName,
-                s.SlackHandle,
+                i.Id,
+                i.FirstName,
+                i.LastName,
+                i.SlackHandle,
+                i.Specialty,
                 c.Id,
-                c.Name
-            from Student s
-            join Cohort c on s.CohortId = c.Id
+            from Instructor i
+            join Cohort c on i.CohortId = c.Id
         ";
 
             using (IDbConnection conn = Connection)
             {
-                Dictionary<int, Student> students = new Dictionary<int, Student>();
+                Dictionary<int, Instructor> instructors = new Dictionary<int, Instructor>();
 
-                var studentQuerySet = await conn.QueryAsync<Student, Cohort, Student>(
+                var instructorQuerySet = await conn.QueryAsync<Instructor, Cohort, Instructor>(
                         sql,
-                        (student, cohort) => {
-                            if (!students.ContainsKey(student.Id))
+                        (instructor, cohort) => {
+                            if (!instructors.ContainsKey(instructor.Id))
                             {
-                                students[student.Id] = student;
+                                instructors[instructor.Id] = instructor;
                             }
-                            students[student.Id].Cohort = cohort;
-                            return student;
+                            instructors[instructor.Id].Cohort = cohort;
+                            return instructor;
                         }
                     );
-                return View(students.Values);
+                return View(instructors.Values);
 
             }
         }
@@ -77,24 +77,27 @@ namespace Workforce.Controllers
 
             string sql = $@"
             select
-                s.Id,
-                s.FirstName,
-                s.LastName,
-                s.SlackHandle
-            from Student s
-            WHERE s.Id = {id}";
+                i.Id,
+                i.FirstName,
+                i.LastName,
+                i.SlackHandle,
+                i.Specialty
+            from Instructor i
+            join Cohort c on i.CohortId = c.Id
+            WHERE i.Id = {id}
+            ";
 
             using (IDbConnection conn = Connection)
             {
 
-                Student student = (await conn.QueryAsync<Student>(sql)).ToList().Single();
+                Instructor instructor = (await conn.QueryAsync<Instructor>(sql)).ToList().Single();
 
-                if (student == null)
+                if (instructor == null)
                 {
                     return NotFound();
                 }
 
-                return View(student);
+                return View(instructor);
             }
         }
 
@@ -123,25 +126,26 @@ namespace Workforce.Controllers
             }
         }
 
-        // POST: Employee/Create
+        // POST: Instructor/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Student student)
+        public async Task<IActionResult> Create(Instructor instructor)
         {
 
             if (ModelState.IsValid)
             {
                 string sql = $@"
-                    INSERT INTO Student
-                        ( Id, FirstName, LastName, SlackHandle, CohortId )
+                    INSERT INTO Instructor
+                        ( Id, FirstName, LastName, SlackHandle, Specialty, CohortId )
                         VALUES
                         ( null
-                            , '{student.FirstName}'
-                            , '{student.LastName}'
-                            , '{student.SlackHandle}'
-                            , {student.CohortId}
+                            , '{instructor.FirstName}'
+                            , '{instructor.LastName}'
+                            , '{instructor.SlackHandle}'
+                            , '{instructor.Specialty}'
+                            , {instructor.Cohort.Id}
                         )
                     ";
 
@@ -156,16 +160,16 @@ namespace Workforce.Controllers
                 }
             }
 
-            // ModelState was invalid, or saving the Student data failed. Show the form again.
+            // ModelState was invalid, or saving the Instructor data failed. Show the form again.
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Cohort> cohorts = (await conn.QueryAsync<Cohort>("SELECT Id, Name FROM Cohort")).ToList();
-                // ViewData["CohortId"] = new SelectList (cohorts, "Id", "Name", student.CohortId);
-                ViewData["CohortId"] = await CohortList(student.CohortId);
-                return View(student);
+                // ViewData["CohortId"] = new SelectList (cohorts, "Id", "Name", instructor.CohortId);
+                ViewData["CohortId"] = await CohortList(instructor.Cohort.Id);
+                return View(instructor);
             }
         }
-
+//GET for the Instructor
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
