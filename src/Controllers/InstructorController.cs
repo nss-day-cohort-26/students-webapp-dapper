@@ -90,7 +90,12 @@ namespace Workforce.Controllers
             using (IDbConnection conn = Connection)
             {
 
-                Instructor instructor = (await conn.QueryAsync<Instructor>(sql)).ToList().Single();
+                Instructor instructor = (await conn.QueryAsync<Instructor, Cohort, Instructor>(sql,(instr, cohort) =>
+                {
+                    instr.Cohort = cohort;
+                    return instr;
+                }
+                )).Single();
 
                 if (instructor == null)
                 {
