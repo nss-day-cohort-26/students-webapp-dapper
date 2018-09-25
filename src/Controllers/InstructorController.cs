@@ -180,26 +180,24 @@ namespace Workforce.Controllers
 
             string sql = $@"
                 SELECT
-                    s.Id,
-                    s.FirstName,
-                    s.LastName,
-                    s.SlackHandle,
-                    s.CohortId,
-                    c.Id,
-                    c.Name
-                FROM Student s
-                JOIN Cohort c on s.CohortId = c.Id
-                WHERE s.Id = {id}";
+                i.Id,
+                i.FirstName,
+                i.LastName,
+                i.SlackHandle,
+                i.Specialty
+            from Instructor i
+            join Cohort c on i.CohortId = c.Id
+            WHERE i.Id = {id}";
 
             using (IDbConnection conn = Connection)
             {
-                StudentEditViewModel model = new StudentEditViewModel(_config);
+                InstructorEditViewModel model = new InstructorEditViewModel(_config);
 
-                model.Student = (await conn.QueryAsync<Student, Cohort, Student>(
+                model.Instructor = (await conn.QueryAsync<Instructor, Cohort, Instructor>(
                     sql,
-                    (student, cohort) => {
-                        student.Cohort = cohort;
-                        return student;
+                    (instructor, cohort) => {
+                        instructor.Cohort = cohort;
+                        return instructor;
                     }
                 )).Single();
 
