@@ -205,11 +205,12 @@ namespace Workforce.Controllers
             }
         }
 
+        //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, StudentEditViewModel model)
+        public async Task<IActionResult> Edit(int id, InstructorEditViewModel model)
         {
-            if (id != model.Student.Id)
+            if (id != model.Instructor.Id)
             {
                 return NotFound();
             }
@@ -217,11 +218,12 @@ namespace Workforce.Controllers
             if (ModelState.IsValid)
             {
                 string sql = $@"
-                UPDATE Student
-                SET FirstName = '{model.Student.FirstName}',
-                    LastName = '{model.Student.LastName}',
-                    SlackHandle = '{model.Student.SlackHandle}',
-                    CohortId = {model.Student.CohortId}
+                UPDATE Instructor
+                SET FirstName = '{model.Instructor.FirstName}',
+                    LastName = '{model.Instructor.LastName}',
+                    SlackHandle = '{model.Instructor.SlackHandle}',
+                    Specialty = '{model.Instructor.Specialty}',
+                    CohortId = {model.Instructor.CohortId}
                 WHERE Id = {id}";
 
                 using (IDbConnection conn = Connection)
@@ -249,27 +251,28 @@ namespace Workforce.Controllers
 
             string sql = $@"
                 select
-                    s.Id,
-                    s.FirstName,
-                    s.LastName,
-                    s.SlackHandle
-                from Student s
-                WHERE s.Id = {id}";
+                    i.Id,
+                    i.FirstName,
+                    i.LastName,
+                    i.SlackHandle,
+                    i.Specialty
+                from Instructor i
+                WHERE i.Id = {id}";
 
             using (IDbConnection conn = Connection)
             {
 
-                Student student = (await conn.QueryAsync<Student>(sql)).ToList().Single();
+                Instructor instructor = (await conn.QueryAsync<Instructor>(sql)).ToList().Single();
 
-                if (student == null)
+                if (instructor == null)
                 {
                     return NotFound();
                 }
 
-                return View(student);
+                return View(instructor);
             }
         }
-
+//DELETE
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
