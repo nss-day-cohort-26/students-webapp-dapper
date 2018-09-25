@@ -139,7 +139,6 @@ namespace Workforce.Controllers {
             // ModelState was invalid, or saving the Student data failed. Show the form again.
             using (IDbConnection conn = Connection) {
                 IEnumerable<Cohort> cohorts = (await conn.QueryAsync<Cohort> ("SELECT Id, Name FROM Cohort")).ToList ();
-                // ViewData["CohortId"] = new SelectList (cohorts, "Id", "Name", student.CohortId);
                 ViewData["CohortId"] = await CohortList(student.CohortId);
                 return View (student);
             }
@@ -181,7 +180,7 @@ namespace Workforce.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit (int id, StudentEditViewModel model) {
+        public async Task<IActionResult> Edit ([FromRoute] int id, StudentEditViewModel model) {
             if (id != model.Student.Id) {
                 return NotFound ();
             }

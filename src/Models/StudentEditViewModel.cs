@@ -20,11 +20,12 @@ namespace Workforce.Models.ViewModels
         [Display(Name="Current Cohort")]
         public List<SelectListItem> Cohorts { get; }
 
+
         private readonly IConfiguration _config;
 
         public IDbConnection Connection {
             get {
-                return new SqliteConnection (_config.GetConnectionString ("DefaultConnection"));
+                return new SqlConnection (_config.GetConnectionString ("DefaultConnection"));
             }
         }
 
