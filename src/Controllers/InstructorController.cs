@@ -278,7 +278,7 @@ namespace Workforce.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
 
-            string sql = $@"DELETE FROM Student WHERE Id = {id}";
+            string sql = $@"DELETE FROM Instructor WHERE Id = {id}";
 
             using (IDbConnection conn = Connection)
             {
