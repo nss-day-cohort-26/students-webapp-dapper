@@ -5,16 +5,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Instructor\Create.cshtml" />
+    <Content Remove="Views\Instructor\DeleteConfirm.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Views\Instructor\Create.cshtml" />
+    <Compile Include="Views\Instructor\DeleteConfirm.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.1.0" />
     <PackageReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.2" />
     <PackageReference Include="Microsoft.Net.Compilers" Version="2.8.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Instructor\" />
   </ItemGroup>
 
 </Project>
