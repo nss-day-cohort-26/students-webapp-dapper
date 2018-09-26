@@ -8,12 +8,14 @@
     <Content Remove="Views\Instructor\Create.cshtml" />
     <Content Remove="Views\Instructor\DeleteConfirm.cshtml" />
     <Content Remove="Views\Instructor\Details.cshtml" />
+    <Content Remove="Views\Instructor\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Views\Instructor\Create.cshtml" />
     <Compile Include="Views\Instructor\DeleteConfirm.cshtml" />
     <Compile Include="Views\Instructor\Details.cshtml" />
+    <Compile Include="Views\Instructor\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
